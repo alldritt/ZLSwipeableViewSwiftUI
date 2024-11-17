@@ -1,2 +1,3 @@
 # ZLSwipeableViewSwiftUI
-A SwiftUI implementation of ZLSwipeableViewSwift
+
+A SwiftUI wrapper for [ZLSwipeableViewSwift](https://github.com/zhxnlai/ZLSwipeableViewSwift).

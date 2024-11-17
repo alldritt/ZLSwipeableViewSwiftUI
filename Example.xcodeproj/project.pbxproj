@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A542FEF82CE7F4A200A14B0D /* ZLSwipeableViewSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A542FEF72CE7F4A200A14B0D /* ZLSwipeableViewSwift */; };
+		A52484242CE9A3550088C247 /* ZLSwipeableViewSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A52484232CE9A3550088C247 /* ZLSwipeableViewSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A542FEE32CE7F41300A14B0D /* ZLSwipeableViewSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZLSwipeableViewSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A542FEE32CE7F41300A14B0D /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A542FEE52CE7F41300A14B0D /* ZLSwipeableViewSwiftUI */ = {
+		A542FEE52CE7F41300A14B0D /* Example */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ZLSwipeableViewSwiftUI;
+			path = Example;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A542FEF82CE7F4A200A14B0D /* ZLSwipeableViewSwift in Frameworks */,
+				A52484242CE9A3550088C247 /* ZLSwipeableViewSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,7 +37,7 @@
 		A542FEDA2CE7F41300A14B0D = {
 			isa = PBXGroup;
 			children = (
-				A542FEE52CE7F41300A14B0D /* ZLSwipeableViewSwiftUI */,
+				A542FEE52CE7F41300A14B0D /* Example */,
 				A542FEE42CE7F41300A14B0D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,7 +45,7 @@
 		A542FEE42CE7F41300A14B0D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A542FEE32CE7F41300A14B0D /* ZLSwipeableViewSwiftUI.app */,
+				A542FEE32CE7F41300A14B0D /* Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,9 +53,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A542FEE22CE7F41300A14B0D /* ZLSwipeableViewSwiftUI */ = {
+		A542FEE22CE7F41300A14B0D /* Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A542FEF12CE7F41600A14B0D /* Build configuration list for PBXNativeTarget "ZLSwipeableViewSwiftUI" */;
+			buildConfigurationList = A542FEF12CE7F41600A14B0D /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
 				A542FEDF2CE7F41300A14B0D /* Sources */,
 				A542FEE02CE7F41300A14B0D /* Frameworks */,
@@ -66,14 +66,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A542FEE52CE7F41300A14B0D /* ZLSwipeableViewSwiftUI */,
+				A542FEE52CE7F41300A14B0D /* Example */,
 			);
-			name = ZLSwipeableViewSwiftUI;
+			name = Example;
 			packageProductDependencies = (
-				A542FEF72CE7F4A200A14B0D /* ZLSwipeableViewSwift */,
+				A52484232CE9A3550088C247 /* ZLSwipeableViewSwiftUI */,
 			);
 			productName = ZLSwipeableViewSwiftUI;
-			productReference = A542FEE32CE7F41300A14B0D /* ZLSwipeableViewSwiftUI.app */;
+			productReference = A542FEE32CE7F41300A14B0D /* Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -91,7 +91,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A542FEDE2CE7F41300A14B0D /* Build configuration list for PBXProject "ZLSwipeableViewSwiftUI" */;
+			buildConfigurationList = A542FEDE2CE7F41300A14B0D /* Build configuration list for PBXProject "Example" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -101,14 +101,14 @@
 			mainGroup = A542FEDA2CE7F41300A14B0D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				A542FEF62CE7F4A200A14B0D /* XCRemoteSwiftPackageReference "ZLSwipeableViewSwift" */,
+				A52484222CE9A3550088C247 /* XCLocalSwiftPackageReference "../ZLSwipeableViewSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A542FEE42CE7F41300A14B0D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A542FEE22CE7F41300A14B0D /* ZLSwipeableViewSwiftUI */,
+				A542FEE22CE7F41300A14B0D /* Example */,
 			);
 		};
 /* End PBXProject section */
@@ -186,7 +186,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -243,7 +243,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -260,7 +260,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ZLSwipeableViewSwiftUI/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Example/Preview Content\"";
 				DEVELOPMENT_TEAM = Z7S6X96M3X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -269,13 +269,18 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.latenightsw.ZLSwipeableViewSwiftUI;
+				PRODUCT_BUNDLE_IDENTIFIER = com.latenightsw.ZLSwipeableViewSwiftUIExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -289,7 +294,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ZLSwipeableViewSwiftUI/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Example/Preview Content\"";
 				DEVELOPMENT_TEAM = Z7S6X96M3X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -298,13 +303,18 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.latenightsw.ZLSwipeableViewSwiftUI;
+				PRODUCT_BUNDLE_IDENTIFIER = com.latenightsw.ZLSwipeableViewSwiftUIExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -314,7 +324,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A542FEDE2CE7F41300A14B0D /* Build configuration list for PBXProject "ZLSwipeableViewSwiftUI" */ = {
+		A542FEDE2CE7F41300A14B0D /* Build configuration list for PBXProject "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A542FEEF2CE7F41600A14B0D /* Debug */,
@@ -323,7 +333,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A542FEF12CE7F41600A14B0D /* Build configuration list for PBXNativeTarget "ZLSwipeableViewSwiftUI" */ = {
+		A542FEF12CE7F41600A14B0D /* Build configuration list for PBXNativeTarget "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A542FEF22CE7F41600A14B0D /* Debug */,
@@ -334,22 +344,17 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		A542FEF62CE7F4A200A14B0D /* XCRemoteSwiftPackageReference "ZLSwipeableViewSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/zhxnlai/ZLSwipeableViewSwift.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		A52484222CE9A3550088C247 /* XCLocalSwiftPackageReference "../ZLSwipeableViewSwiftUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../ZLSwipeableViewSwiftUI;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A542FEF72CE7F4A200A14B0D /* ZLSwipeableViewSwift */ = {
+		A52484232CE9A3550088C247 /* ZLSwipeableViewSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A542FEF62CE7F4A200A14B0D /* XCRemoteSwiftPackageReference "ZLSwipeableViewSwift" */;
-			productName = ZLSwipeableViewSwift;
+			productName = ZLSwipeableViewSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,0 +1,15 @@
+{
+  "originHash" : "68a0d31c36314009eb2f1fbbc2a33454396a61749f6633aab85457e27f5a0874",
+  "pins" : [
+    {
+      "identity" : "zlswipeableviewswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zhxnlai/ZLSwipeableViewSwift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "4e694c883dec91f858eb5a2af5fd9ada3d2e47dc"
+      }
+    }
+  ],
+  "version" : 3
+}

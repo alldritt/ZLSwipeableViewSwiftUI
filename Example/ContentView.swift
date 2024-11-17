@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ZLSwipeableViewSwiftUI
 
 
 struct ContentView: View {

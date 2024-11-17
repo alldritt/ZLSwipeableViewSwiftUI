@@ -25,7 +25,7 @@ private class SwiftUIZLSwipeableView: ZLSwipeableView {
 }
 
 
-struct SwipeableView<Content: View>: UIViewRepresentable {
+public struct SwipeableView<Content: View>: UIViewRepresentable {
     
     @ViewBuilder let content: () -> Content
     
@@ -73,7 +73,7 @@ struct SwipeableView<Content: View>: UIViewRepresentable {
     //  examples of the correct way to implement something like SwiftUI's List.
     //
     
-    func makeUIView(context: Context) -> ZLSwipeableView {
+    public func makeUIView(context: Context) -> ZLSwipeableView {
         let newView = SwiftUIZLSwipeableView()
         var viewControllers = Set<UIHostingController<Content>>()
         
@@ -141,95 +141,42 @@ struct SwipeableView<Content: View>: UIViewRepresentable {
         return newView
     }
     
-    func updateUIView(_ uiView: ZLSwipeableView, context: Context) {
+    public func updateUIView(_ uiView: ZLSwipeableView, context: Context) {
         print("updateUIView")
     }
     
-    func onDidStart(action: @escaping (_: any View) -> Void) -> Self {
+    public func onDidStart(action: @escaping (_: any View) -> Void) -> Self {
         var copiedView = self
         
         copiedView.didStart = action
         return copiedView
     }
     
-    func onDidEnd(action: @escaping (_: any View) -> Void) -> Self {
+    public func onDidEnd(action: @escaping (_: any View) -> Void) -> Self {
         var copiedView = self
         
         copiedView.didEnd = action
         return copiedView
     }
     
-    func onDidCancel(action: @escaping (_: any View) -> Void) -> Self {
+    public func onDidCancel(action: @escaping (_: any View) -> Void) -> Self {
         var copiedView = self
         
         copiedView.didCancel = action
         return copiedView
     }
     
-    func numberOfActiveView(newValue: UInt) -> Self {
+    public func numberOfActiveView(newValue: UInt) -> Self {
         var copiedView = self
         
         copiedView.numberOfActiveView = newValue
         return copiedView
     }
     
-    func numberOfHistoryItem(newValue: UInt) -> Self {
+    public func numberOfHistoryItem(newValue: UInt) -> Self {
         var copiedView = self
         
         copiedView.numberOfHistoryItem = newValue
         return copiedView
     }
-}
-
-
-struct SwipableReaderView: View {
-    
-    var body: some View {
-        EmptyView()
-    }
-}
-
-
-struct DemoSwipeableView: View {
-    let colors: [UIColor] = [UIColor.green, UIColor.blue, UIColor.purple, UIColor.brown, UIColor.cyan,  UIColor.orange, UIColor.red]
-    @State var colorIndex = 0
-
-    var nextColor: Color {
-        let c = Color(uiColor: colors[colorIndex % colors.count])
-                      
-        colorIndex += 1
-        return c
-    }
-    
-    var body: some View {
-        SwipeableView() {
-            ZStack {
-                CardView(color: nextColor)
-                VStack {
-                    Text("Hello World")
-                        .font(.system(size: 40))
-                        .foregroundStyle(Color.white)
-                    Text("\(colorIndex)")
-                        .font(.system(size: 28))
-                        .foregroundStyle(Color.white)
-                }
-            }
-        }
-        .numberOfActiveView(newValue: 5)
-        .onDidStart { _ in
-            print("SwiftUI Did Start...")
-        }
-        .onDidEnd { _ in
-            print("SwiftUI Did End...")
-        }
-        .onDidCancel { _ in
-            print("SwiftUI Did Cancel...")
-        }
-    }
-}
-
-
-#Preview {
-    DemoSwipeableView()
-    .padding()
 }

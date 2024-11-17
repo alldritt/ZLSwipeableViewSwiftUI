@@ -1,5 +1,5 @@
 //
-//  ZLSwipeableViewSwiftUIApp.swift
+//  ExampleApp.swift
 //  ZLSwipeableViewSwiftUI
 //
 //  Created by Mark Alldritt on 2024-11-15.

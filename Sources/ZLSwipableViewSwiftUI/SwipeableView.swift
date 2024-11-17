@@ -166,14 +166,14 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         return copiedView
     }
     
-    public func numberOfActiveView(newValue: UInt) -> Self {
+    public func numberOfActiveView(_ newValue: UInt) -> Self {
         var copiedView = self
         
         copiedView.numberOfActiveView = newValue
         return copiedView
     }
     
-    public func numberOfHistoryItem(newValue: UInt) -> Self {
+    public func numberOfHistoryItem(_ newValue: UInt) -> Self {
         var copiedView = self
         
         copiedView.numberOfHistoryItem = newValue

@@ -45,7 +45,7 @@ struct ContentView: View {
                 }
             }
         }
-        .numberOfActiveView(newValue: 5)
+        .numberOfActiveView(5)
         .onDidStart { _ in
             print("SwiftUI Did Start...")
         }

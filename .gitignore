@@ -64,3 +64,5 @@ fastlane/test_output
 # macOS
 
 .DS_Store
+.DS_Store
+Package.resolved

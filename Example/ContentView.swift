@@ -33,27 +33,52 @@ struct ContentView: View {
     
     var body: some View {
         SwipeableView() {
-            ZStack {
-                CardView(color: nextColor)
-                VStack {
-                    Text("Hello World")
-                        .font(.system(size: 40))
-                        .foregroundStyle(Color.white)
-                    Text("\(colorIndex)")
-                        .font(.system(size: 28))
-                        .foregroundStyle(Color.white)
+            if colorIndex <= 10 {
+                ZStack {
+                    CardView()
+                        .foregroundColor(nextColor)
+                    VStack {
+                        Text("Hello World")
+                            .font(.system(size: 40))
+                            .foregroundStyle(Color.white)
+                        Text("\(colorIndex)")
+                            .font(.system(size: 28))
+                            .foregroundStyle(Color.white)
+                            .onZLSwipeStarted { location in
+                                print("Text.onZLSwipeStarted at \(location)...")
+                            }
+                            .onZLSwipeEnded { location in
+                                print("Text.onZLSwipeEnded at \(location)...")
+                            }
+                            .onZLSwipeCancelled {
+                                print("Text.onZLSwipeCancelled...")
+                            }
+                    }
                 }
+                .padding(5)
+                .onZLSwipeStarted { location in
+                    print("Card.onZLSwipeStarted at \(location)...")
+                }
+                .onZLSwipeEnded { location in
+                    print("Card.onZLSwipeEnded at \(location)...")
+                }
+                .onZLSwipeCancelled {
+                    print("Card.onZLSwipeCancelled...")
+                }
+            }
+            else {
+                nil
             }
         }
         .numberOfActiveView(5)
-        .onDidStart { _ in
-            print("SwiftUI Did Start...")
+        .onZLSwipeStarted { location in
+            print("SwipeableView.onZLSwipeStarted at \(location)...")
         }
-        .onDidEnd { _ in
-            print("SwiftUI Did End...")
+        .onZLSwipeEnded { location in
+            print("SwipeableView.onZLSwipeEnded at \(location)...")
         }
-        .onDidCancel { _ in
-            print("SwiftUI Did Cancel...")
+        .onZLSwipeCancelled { 
+            print("SwipeableView.onZLSwipeCancelled...")
         }
         .padding()
     }

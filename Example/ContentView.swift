@@ -35,41 +35,56 @@ struct ContentView: View {
     @State private var currentColor: NamedColor?
 
     var body: some View {
-        VStack {
-            Text(currentColor?.name ?? "Done")
-                .font(.headline)
-                .padding(.bottom)
+        SwipeableViewReader { proxy in
+            VStack {
+                Text(currentColor?.name ?? "Done")
+                    .font(.headline)
+                    .padding(.bottom)
 
-            SwipeableView(namedColors, currentItem: $currentColor) { item in
-                ZStack {
-                    CardView()
-                        .foregroundColor(item.color)
-                    VStack {
-                        Text(item.name)
-                            .font(.system(size: 40))
-                            .foregroundStyle(Color.white)
+                SwipeableView(namedColors, currentItem: $currentColor) { item in
+                    ZStack {
+                        CardView()
+                            .foregroundColor(item.color)
+                        VStack {
+                            Text(item.name)
+                                .font(.system(size: 40))
+                                .foregroundStyle(Color.white)
+                        }
+                    }
+                    .padding(5)
+                    .onZLSwipeStarted { location in
+                        print("Card.onZLSwipeStarted at \(location)...")
+                    }
+                    .onZLSwipeCancelled {
+                        print("Card.onZLSwipeCancelled...")
                     }
                 }
-                .padding(5)
+                .numberOfActiveView(5)
+                .numberOfHistoryItem(3)
+                .onZLSwiped { direction, _ in
+                    print("SwipeableView.onZLSwiped \(direction)...")
+                }
                 .onZLSwipeStarted { location in
-                    print("Card.onZLSwipeStarted at \(location)...")
+                    print("SwipeableView.onZLSwipeStarted at \(location)...")
                 }
                 .onZLSwipeCancelled {
-                    print("Card.onZLSwipeCancelled...")
+                    print("SwipeableView.onZLSwipeCancelled...")
                 }
+
+                HStack {
+                    Button("Undo") { proxy.rewind() }
+                        .disabled(!proxy.canRewind)
+                    Button("← Left") { proxy.swipe(.Left) }
+                        .disabled(!proxy.canSwipe)
+                    Button("Right →") { proxy.swipe(.Right) }
+                        .disabled(!proxy.canSwipe)
+                    Button("Skip") { proxy.discardTop() }
+                        .disabled(!proxy.canSwipe)
+                }
+                .padding(.top)
             }
-            .numberOfActiveView(5)
-            .onZLSwiped { direction, _ in
-                print("SwipeableView.onZLSwiped \(direction)...")
-            }
-            .onZLSwipeStarted { location in
-                print("SwipeableView.onZLSwipeStarted at \(location)...")
-            }
-            .onZLSwipeCancelled {
-                print("SwipeableView.onZLSwipeCancelled...")
-            }
+            .padding()
         }
-        .padding()
     }
 }
 

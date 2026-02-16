@@ -157,6 +157,40 @@ The following action modifiers are available:
 - `numberOfActiveView(_ count: UInt)` -- sets the number of cards visible in the stack at once.
 - `numberOfHistoryItem(_ count: UInt)` -- sets the number of previously swiped cards kept in history.
 
+### Programmatic Control
+
+Use `SwipeableViewReader` to get a proxy object that can swipe, rewind, or discard cards programmatically. This follows the same pattern as SwiftUI's `ScrollViewReader` / `ScrollViewProxy`:
+
+```swift
+SwipeableViewReader { proxy in
+    VStack {
+        SwipeableView(items, currentItem: $currentItem) { item in
+            CardView()
+                .foregroundColor(item.color)
+        }
+        .numberOfActiveView(5)
+        .numberOfHistoryItem(3)
+
+        HStack {
+            Button("Undo") { proxy.rewind() }
+            Button("Swipe Left") { proxy.swipe(.Left) }
+            Button("Swipe Right") { proxy.swipe(.Right) }
+            Button("Skip") { proxy.discardTop() }
+        }
+    }
+}
+```
+
+The proxy provides the following methods and properties:
+
+- `swipe(_ direction: Direction)` -- programmatically swipe the top card in the given direction with an animated transition. The `currentItem` binding stays in sync automatically.
+- `rewind()` -- restore the most recently swiped card from history. Requires `numberOfHistoryItem` to be set. No-op when history is empty. Note that cards removed via `discardTop()` are not added to history and cannot be rewound.
+- `discardTop()` -- instantly remove the top card without animation. No-op when there are no cards. This operation is not undoable.
+- `canRewind: Bool` -- whether there are cards in history that can be rewound.
+- `canSwipe: Bool` -- whether there is a top card that can be swiped or discarded.
+
+> **Note:** `canRewind` and `canSwipe` are computed properties that read UIKit state. They re-evaluate on SwiftUI re-renders (triggered by `currentItem` binding changes), which covers the typical case. They won't update reactively on their own without a binding change.
+
 ## Example Project
 
 The repository includes a complete example application. To run it:
@@ -165,7 +199,7 @@ The repository includes a complete example application. To run it:
 2. Open `Example.xcodeproj` in Xcode
 3. Build and run the Example target
 
-The example demonstrates bounded card collections, action callbacks at multiple levels, custom card content layered on `CardView`, and configuration options.
+The example demonstrates bounded card collections, action callbacks at multiple levels, custom card content layered on `CardView`, configuration options, and programmatic card control via `SwipeableViewReader`.
 
 ## Migrating from v0.1.0
 
@@ -178,7 +212,7 @@ v0.2.0 renamed the action callback API. The old names still work but are depreca
 ## Version History
 
 - v0.1.0 -- initial implementation.
-- v0.2.0 -- data-driven initializers, `currentItem:` binding, per-card action callbacks, bounded card support, and `CardView`.
+- v0.2.0 -- data-driven initializers, `currentItem:` binding, per-card action callbacks, bounded card support, `CardView`, and `SwipeableViewReader` for programmatic control.
 
 ## License
 

@@ -41,6 +41,7 @@ class SwipeableUIHostingController<Content>: UIHostingController<Content> where 
 public struct SwipeableView<Content: View>: UIViewRepresentable {
 
     @ViewBuilder let content: () -> Content?
+    @Environment(\.swipeableViewProxy) private var proxy
 
     //  Configurable view attributes
     //
@@ -244,6 +245,18 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
             coordinator.currentItemUpdate?(coordinator.topIndex)
         }
 
+        if let proxy {
+            proxy.zlSwipeableView = newView
+            proxy.onRewindIndexUpdate = {
+                coordinator.topIndex = max(coordinator.topIndex - 1, 0)
+                coordinator.currentItemUpdate?(coordinator.topIndex)
+            }
+            proxy.onDiscardTopIndexUpdate = {
+                coordinator.topIndex += 1
+                coordinator.currentItemUpdate?(coordinator.topIndex)
+            }
+        }
+
         return newView
 
     }
@@ -266,6 +279,18 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         coordinator.didSwipe = didSwipe
         coordinator.didCancel = didCancel
         coordinator.currentItemUpdate = currentItemUpdate
+
+        if let proxy {
+            proxy.zlSwipeableView = uiView
+            proxy.onRewindIndexUpdate = {
+                coordinator.topIndex = max(coordinator.topIndex - 1, 0)
+                coordinator.currentItemUpdate?(coordinator.topIndex)
+            }
+            proxy.onDiscardTopIndexUpdate = {
+                coordinator.topIndex += 1
+                coordinator.currentItemUpdate?(coordinator.topIndex)
+            }
+        }
     }
 
     //  Modifiers - Container View Callbacks

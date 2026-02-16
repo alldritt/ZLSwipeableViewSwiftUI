@@ -22,26 +22,19 @@ struct ContentView: View {
                            .red,
                            .mint,
                            .indigo]
-    @State var colorIndex = 0
+    @State var swipeCount = 0
 
-    var nextColor: Color {
-        let c = colors[colorIndex % colors.count]
-                      
-        colorIndex += 1
-        return c
-    }
-    
     var body: some View {
-        SwipeableView() {
-            if colorIndex <= 10 {
+        SwipeableView {
+            if swipeCount <= 10 {
                 ZStack {
                     CardView()
-                        .foregroundColor(nextColor)
+                        .foregroundColor(colors.randomElement()!)
                     VStack {
                         Text("Hello World")
                             .font(.system(size: 40))
                             .foregroundStyle(Color.white)
-                        Text("\(colorIndex)")
+                        Text("\(swipeCount)")
                             .font(.system(size: 28))
                             .foregroundStyle(Color.white)
                             .onZLSwipeStarted { location in
@@ -71,13 +64,16 @@ struct ContentView: View {
             }
         }
         .numberOfActiveView(5)
+        .onZLSwiped { _, _ in
+            swipeCount += 1
+        }
         .onZLSwipeStarted { location in
             print("SwipeableView.onZLSwipeStarted at \(location)...")
         }
         .onZLSwipeEnded { location in
             print("SwipeableView.onZLSwipeEnded at \(location)...")
         }
-        .onZLSwipeCancelled { 
+        .onZLSwipeCancelled {
             print("SwipeableView.onZLSwipeCancelled...")
         }
         .padding()

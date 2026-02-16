@@ -93,6 +93,27 @@ var body: some View {
 
 This works with both `Identifiable` collections and the explicit `id:` key path form.
 
+### Dynamic Data
+
+Data-driven SwipeableViews react to changes in the backing collection. If you append or replace items, the deck automatically loads new cards into any empty slots. The `currentItem` binding and `canSwipe` state update accordingly:
+
+```swift
+struct ContentView: View {
+    @State private var cards: [Profile] = initialBatch
+
+    var body: some View {
+        SwipeableView(cards, currentItem: $currentProfile) { profile in
+            ProfileCard(profile: profile)
+        }
+        Button("Load More") {
+            cards.append(contentsOf: nextBatch)
+        }
+    }
+}
+```
+
+Cards already displayed are not refreshed -- only empty slots are filled from the updated collection. Element identity (via `Identifiable` or the `id:` key path) is used to detect changes, not collection count.
+
 ### Content Closure
 
 For dynamic or infinite card sequences, use the content closure form. The closure is called each time a new card is needed. Return `nil` to end the sequence:
@@ -212,7 +233,7 @@ v0.2.0 renamed the action callback API. The old names still work but are depreca
 ## Version History
 
 - v0.1.0 -- initial implementation.
-- v0.2.0 -- data-driven initializers, `currentItem:` binding, per-card action callbacks, bounded card support, `CardView`, and `SwipeableViewReader` for programmatic control.
+- v0.2.0 -- data-driven initializers with dynamic data change handling, `currentItem:` binding, per-card action callbacks, bounded card support, `CardView`, and `SwipeableViewReader` for programmatic control.
 
 ## License
 

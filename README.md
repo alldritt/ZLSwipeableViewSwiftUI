@@ -1,11 +1,10 @@
 # ZLSwipeableViewSwiftUI
 
-A SwiftUI wrapper for [ZLSwipeableViewSwift](https://github.com/zhxnlai/ZLSwipeableViewSwift), bringing Tinder-style swipeable card stacks to SwiftUI. This wrapper provides a native SwiftUI API for creating interactive card-based interfaces with swipe gestures.
+A SwiftUI wrapper for [ZLSwipeableViewSwift](https://github.com/zhxnlai/ZLSwipeableViewSwift), bringing Tinder-style swipeable card stacks to SwiftUI.
 
 ## Features
 
-- Swipeable card stack interface with intuitive gesture controls
-- Support for swipe left, right, up, and down gestures
+- Swipeable card stack with gesture controls for left, right, up, and down
 - Bounded or infinite card collections
 - Per-card and per-view action callbacks
 - Built-in `CardView` component with customizable styling
@@ -32,8 +31,8 @@ dependencies: [
 ### Requirements
 
 - iOS 17.0+
-- Swift 5.9+
-- Xcode 15.0+
+- Swift 6.0+
+- Xcode 16.0+
 
 ## Usage
 
@@ -43,7 +42,7 @@ See the screen recording below for a demonstration of SwipeableView in action:
 
 ### Basic Example
 
-Here's a simple example showing a stack of colored cards:
+A simple stack of colored cards:
 
 ```swift
 import SwiftUI
@@ -55,7 +54,7 @@ struct ContentView: View {
                            .mint, .indigo]
 
     var body: some View {
-        SwipeableView() {
+        SwipeableView {
             CardView()
                 .foregroundColor(colors.randomElement()!)
                 .padding(5)
@@ -64,14 +63,14 @@ struct ContentView: View {
 }
 ```
 
-The `CardView` is a built-in component provided by the package that creates a rounded rectangle card with shadow. You can use it as-is or create your own custom card views.
+`CardView` is a built-in component that creates a rounded rectangle card with shadow. You can use it as-is or create your own custom card views.
 
 ### Custom Card Views
 
-You can use any SwiftUI view as a card:
+Any SwiftUI view works as a card:
 
 ```swift
-SwipeableView() {
+SwipeableView {
     VStack {
         Image(systemName: "heart.fill")
             .font(.system(size: 60))
@@ -85,41 +84,9 @@ SwipeableView() {
 }
 ```
 
-## Example Project
-
-The repository includes a complete example application that demonstrates advanced features of SwipeableView. To run the example:
-
-1. Clone this repository
-2. Open `Example.xcodeproj` in Xcode
-3. Build and run the Example target
-
-The example application demonstrates:
-
-- **Bounded card collections** - Shows how to create a finite stack of cards that ends after a specific number
-- **Action callbacks** - Implements callbacks at multiple levels (individual views, cards, and SwipeableView)
-- **Custom card content** - Demonstrates how to layer custom SwiftUI views on top of CardView
-- **Configuration options** - Shows usage of modifiers like `numberOfActiveView()`
-
-The example is a great starting point for understanding how to integrate SwipeableView into your own projects.
-
-## Versions
-
-- v0.1.0 - the initial implementation of this SwiftUI wrapper for ZLSwipeableViewSwift.
-- v0.2.0 - updated action callback API.
-
-## v0.2.0 Changes
-
-### Requirements
-
-ZLSwipeableViewSwiftUI requires iOS 17.
-
-### CardView
-
-The ZLSwipeableViewSwiftUI package introduces a basic `CardView`.
-
 ### Bounded Cards
 
-It is now possible to have a bounded collection of cards.  Returning nil from the content function passed to SwipeableView ends the sequence of cards:
+By default, SwipeableView provides an infinite sequence of cards. To create a bounded collection, return `nil` from the content closure to end the sequence:
 
 ```swift
 var nextColor: Color? {
@@ -127,7 +94,7 @@ var nextColor: Color? {
 }
 
 var body: some View {
-    SwipeableView() {
+    SwipeableView {
         if let nextColor {
             CardView()
                 .foregroundColor(nextColor)
@@ -141,47 +108,69 @@ var body: some View {
 }
 ```
 
-### Per-Card Action Callbacks
+### Action Callbacks
 
-Previously it was only possible to add action callbacks to the SwipeableView.  It is now possible to add callbacks to each card (or subview) as well as the SwipeableView.  Note that the names and parameters of the callbacks have also been changed as of v0.2.0.
+Action callbacks can be attached to individual cards or to the SwipeableView itself.
 
-To add an action callback to a card, place the action modifier on the view returned by your content function passed to SwipeableView:
+To add a callback to a card, place the modifier on the view returned by your content closure:
 
 ```swift
-var body: some View {
-    SwipeableView() {
-        CardView()
+SwipeableView {
+    CardView()
         .padding()
         .onZLSwipeStarted { location in
-            print("Card.onZLSwipeStarted at \(location)")
+            print("Card swiped starting at \(location)")
         }
-    }
-    .numberOfActiveView(5)
 }
 ```
 
-Adding action callbacks to the SwipeableView is done like this:
+To add a callback to the SwipeableView container:
 
 ```swift
-var body: some View {
-    SwipeableView() {
-        CardView()
+SwipeableView {
+    CardView()
         .padding()
-    }
-    .numberOfActiveView(5)
-    .onZLSwipeStarted { location in
-        print("SwipeableView.onZLSwipeStarted at \(location)")
-    }
+}
+.onZLSwipeStarted { location in
+    print("SwipeableView.onZLSwipeStarted at \(location)")
 }
 ```
 
-The following action view modifiers are available:
+The following action modifiers are available:
 
-- `onZLSwiped`
-- `onZLSwipeStarted`
-- `onZLSwipeCancelled`
-- `onZLSwipeEnded`
-- `onZLSwiping` (only Per-Card Action)
+- `onZLSwiped` -- called when a card is swiped away. Provides a `Direction` (from [ZLSwipeableViewSwift](https://github.com/zhxnlai/ZLSwipeableViewSwift)) and a `CGVector` velocity.
+- `onZLSwipeStarted` -- called when a swipe gesture begins. Provides the starting `CGPoint` location.
+- `onZLSwipeEnded` -- called when a swipe gesture ends. Provides the ending `CGPoint` location.
+- `onZLSwipeCancelled` -- called when a swipe gesture is cancelled.
+- `onZLSwiping` -- called continuously during a swipe. Provides the current `CGPoint` location, a `CGPoint` translation, and a `UnitPoint` movement value clamped to [-1, 1] representing the relative swipe position.
+
+### Configuration Modifiers
+
+- `numberOfActiveView(_ count: UInt)` -- sets the number of cards visible in the stack at once.
+- `numberOfHistoryItem(_ count: UInt)` -- sets the number of previously swiped cards kept in history.
+
+## Example Project
+
+The repository includes a complete example application. To run it:
+
+1. Clone this repository
+2. Open `Example.xcodeproj` in Xcode
+3. Build and run the Example target
+
+The example demonstrates bounded card collections, action callbacks at multiple levels, custom card content layered on `CardView`, and configuration options.
+
+## Migrating from v0.1.0
+
+v0.2.0 renamed the action callback API. The old names still work but are deprecated:
+
+- `onDidStart` → `onZLSwipeStarted`
+- `onDidEnd` → `onZLSwipeEnded`
+- `onDidCancel` → `onZLSwipeCancelled`
+
+## Version History
+
+- v0.1.0 -- initial implementation.
+- v0.2.0 -- new action callback API with per-card callbacks, bounded card support, and `CardView`.
 
 ## License
 

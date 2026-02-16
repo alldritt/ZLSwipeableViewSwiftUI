@@ -184,35 +184,35 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
     }
     
     //  Modifiers - Container View Callbacks
-    public func onZLSwipeStarted(action: @escaping (_ location: CGPoint) -> Void) -> Self {
+    public func onZLSwipeStarted(_ action: @escaping (_ location: CGPoint) -> Void) -> Self {
         var copiedView = self
         
         copiedView.didStart = action
         return copiedView
     }
     
-    public func onZLSwipeCancelled(action: @escaping () -> Void) -> Self {
+    public func onZLSwipeCancelled(_ action: @escaping () -> Void) -> Self {
         var copiedView = self
         
         copiedView.didCancel = action
         return copiedView
     }
 
-    public func onZLSwipeEnded(action: @escaping (_ location: CGPoint) -> Void) -> Self {
+    public func onZLSwipeEnded(_ action: @escaping (_ location: CGPoint) -> Void) -> Self {
         var copiedView = self
         
         copiedView.didEnd = action
         return copiedView
     }
 
-    public func onZLSwiped(action: @escaping (_ direction: Direction, _ velocity: CGVector) -> Void) -> Self {
+    public func onZLSwiped(_ action: @escaping (_ direction: Direction, _ velocity: CGVector) -> Void) -> Self {
         var copiedView = self
         
         copiedView.didSwipe = action
         return copiedView
     }
     
-    public func onZLSwiping(action: @escaping (_ location: CGPoint, _ translation: CGPoint, _ movement: UnitPoint) -> Void) -> Self {
+    public func onZLSwiping(_ action: @escaping (_ location: CGPoint, _ translation: CGPoint, _ movement: UnitPoint) -> Void) -> Self {
         var copiedView = self
         
         copiedView.isSwiping = action
@@ -237,17 +237,17 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
     //  Modifiers - Move to new API please!
     @available(*, deprecated, renamed: "onZLSwipeStarted")
     public func onDidStart(action: @escaping (_ location: CGPoint) -> Void) -> Self {
-        return onZLSwipeStarted(action: action)
+        return onZLSwipeStarted(action)
     }
         
     @available(*, deprecated, renamed: "onZLSwipeEnded")
     public func onDidEnd(action: @escaping (_ location: CGPoint) -> Void) -> Self {
-        return onZLSwipeEnded(action: action)
+        return onZLSwipeEnded(action)
     }
     
     @available(*, deprecated, renamed: "onZLSwipeCancelled")
     public func onDidCancel(action: @escaping () -> Void) -> Self {
-        return onZLSwipeCancelled(action: action)
+        return onZLSwipeCancelled(action)
     }
 }
 
@@ -372,23 +372,23 @@ internal struct ZLSwipeEndedReceiverModifier: ViewModifier {
 
 
 extension View {
-    public func onZLSwiping(perform action: @escaping (_ location: CGPoint, _ translation: CGPoint, _ movement: UnitPoint) -> Void) -> some View {
+    public func onZLSwiping(_ action: @escaping (_ location: CGPoint, _ translation: CGPoint, _ movement: UnitPoint) -> Void) -> some View {
         self.modifier(ZLSwipingReceiverModifier(onSwiping: action))
     }
     
-    public func onZLSwiped(perform action: @escaping (_ direction: Direction, _ velocity: CGVector) -> Void) -> some View {
+    public func onZLSwiped(_ action: @escaping (_ direction: Direction, _ velocity: CGVector) -> Void) -> some View {
         self.modifier(ZLSwipedReceiverModifier(onSwiped: action))
     }
 
-    public func onZLSwipeCancelled(perform action: @escaping () -> Void) -> some View {
+    public func onZLSwipeCancelled(_ action: @escaping () -> Void) -> some View {
         self.modifier(ZLSwipeCancelledReceiverModifier(onSwipeCancelled: action))
     }
 
-    public func onZLSwipeStarted(perform action: @escaping (_ location: CGPoint) -> Void) -> some View {
+    public func onZLSwipeStarted(_ action: @escaping (_ location: CGPoint) -> Void) -> some View {
         self.modifier(ZLSwipeStartedReceiverModifier(onSwipeStarted: action))
     }
     
-    public func onZLSwipeEnded(perform action: @escaping (_ location: CGPoint) -> Void) -> some View {
+    public func onZLSwipeEnded(_ action: @escaping (_ location: CGPoint) -> Void) -> some View {
         self.modifier(ZLSwipeEndedReceiverModifier(onSwipeEnded: action))
     }
 

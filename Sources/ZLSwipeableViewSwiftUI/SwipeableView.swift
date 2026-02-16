@@ -58,6 +58,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
     private var currentItemUpdate: ((_ topIndex: Int) -> Void)? = nil
     private var numberOfActiveView: UInt?
     private var numberOfHistoryItem: UInt?
+    private var dataIDs: [AnyHashable]?
 
     public init(content: @escaping () -> Content?) {
         self.content = content
@@ -70,6 +71,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) where Data.Element: Identifiable {
         let elements = Array(data)
+        self.dataIDs = elements.map { $0.id as AnyHashable }
         self.indexedContent = { index in
             guard index < elements.count else { return nil }
             return content(elements[index])
@@ -85,6 +87,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) {
         let elements = Array(data)
+        self.dataIDs = elements.map { $0[keyPath: id] as AnyHashable }
         self.indexedContent = { index in
             guard index < elements.count else { return nil }
             return content(elements[index])
@@ -101,6 +104,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) where Data.Element: Identifiable {
         let elements = Array(data)
+        self.dataIDs = elements.map { $0.id as AnyHashable }
         self.indexedContent = { index in
             guard index < elements.count else { return nil }
             return content(elements[index])
@@ -122,6 +126,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) {
         let elements = Array(data)
+        self.dataIDs = elements.map { $0[keyPath: id] as AnyHashable }
         self.indexedContent = { index in
             guard index < elements.count else { return nil }
             return content(elements[index])
@@ -144,6 +149,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         var didCancel: (() -> Void)?
         var topIndex: Int = 0
         var currentItemUpdate: ((_ topIndex: Int) -> Void)?
+        var lastDataIDs: [AnyHashable]?
     }
 
     public func makeCoordinator() -> Coordinator {
@@ -257,6 +263,8 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
             }
         }
 
+        coordinator.lastDataIDs = dataIDs
+
         return newView
 
     }
@@ -279,6 +287,14 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         coordinator.didSwipe = didSwipe
         coordinator.didCancel = didCancel
         coordinator.currentItemUpdate = currentItemUpdate
+
+        if let dataIDs, dataIDs != coordinator.lastDataIDs {
+            uiView.loadViews()
+            coordinator.lastDataIDs = dataIDs
+            DispatchQueue.main.async {
+                coordinator.currentItemUpdate?(coordinator.topIndex)
+            }
+        }
 
         if let proxy {
             proxy.zlSwipeableView = uiView

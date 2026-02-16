@@ -33,15 +33,16 @@ let namedColors: [NamedColor] = [
 
 struct ContentView: View {
     @State private var currentColor: NamedColor?
+    @State private var colors: [NamedColor] = Array(namedColors.prefix(3))
 
     var body: some View {
         SwipeableViewReader { proxy in
             VStack {
-                Text(currentColor?.name ?? "Done")
+                Text(currentColor?.name ?? "No More Cards")
                     .font(.headline)
                     .padding(.bottom)
 
-                SwipeableView(namedColors, currentItem: $currentColor) { item in
+                SwipeableView(colors, currentItem: $currentColor) { item in
                     ZStack {
                         CardView()
                             .foregroundColor(item.color)
@@ -72,6 +73,7 @@ struct ContentView: View {
                 }
 
                 HStack {
+                    Spacer()
                     Button("Undo") { proxy.rewind() }
                         .disabled(!proxy.canRewind)
                     Button("← Left") { proxy.swipe(.Left) }
@@ -80,6 +82,13 @@ struct ContentView: View {
                         .disabled(!proxy.canSwipe)
                     Button("Skip") { proxy.discardTop() }
                         .disabled(!proxy.canSwipe)
+                    Spacer()
+                    Button("+ More") {
+                        let next = namedColors.dropFirst(colors.count).prefix(3)
+                        colors.append(contentsOf: next)
+                    }
+                    .disabled(colors.count >= namedColors.count)
+                    Spacer()
                 }
                 .padding(.top)
             }

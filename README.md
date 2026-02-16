@@ -6,6 +6,7 @@ A SwiftUI wrapper for [ZLSwipeableViewSwift](https://github.com/zhxnlai/ZLSwipea
 
 - Swipeable card stack with gesture controls for left, right, up, and down
 - Bounded or infinite card collections
+- Current item binding for tracking the top card
 - Per-card and per-view action callbacks
 - Built-in `CardView` component with customizable styling
 
@@ -72,6 +73,25 @@ SwipeableView(profiles) { profile in
 ```
 
 `CardView` is a built-in component that creates a rounded rectangle card with shadow. You can use it as-is or create your own custom card views.
+
+### Tracking the Current Item
+
+Pass a `currentItem:` binding to track which element is on top of the stack. The binding is read-only -- it updates automatically as cards are swiped away and becomes `nil` when all cards are gone, but setting it externally won't change which card is displayed:
+
+```swift
+@State private var currentProfile: Profile?
+
+var body: some View {
+    VStack {
+        Text(currentProfile?.name ?? "No more profiles")
+        SwipeableView(profiles, currentItem: $currentProfile) { profile in
+            ProfileCard(profile: profile)
+        }
+    }
+}
+```
+
+This works with both `Identifiable` collections and the explicit `id:` key path form.
 
 ### Content Closure
 
@@ -158,7 +178,7 @@ v0.2.0 renamed the action callback API. The old names still work but are depreca
 ## Version History
 
 - v0.1.0 -- initial implementation.
-- v0.2.0 -- data-driven initializers, per-card action callbacks, bounded card support, and `CardView`.
+- v0.2.0 -- data-driven initializers, `currentItem:` binding, per-card action callbacks, bounded card support, and `CardView`.
 
 ## License
 

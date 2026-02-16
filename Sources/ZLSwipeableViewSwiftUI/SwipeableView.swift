@@ -38,22 +38,6 @@ class SwipeableUIHostingController<Content>: UIHostingController<Content> where 
     }
 }
 
-private class DataCursor<Element> {
-    private let elements: [Element]
-    private var index: Int = 0
-
-    init(_ elements: [Element]) {
-        self.elements = elements
-    }
-
-    func next() -> Element? {
-        guard index < elements.count else { return nil }
-        defer { index += 1 }
-        return elements[index]
-    }
-}
-
-
 public struct SwipeableView<Content: View>: UIViewRepresentable {
 
     @ViewBuilder let content: () -> Content?
@@ -69,6 +53,8 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
     private var didEnd: ((_ location: CGPoint) -> Void)? = nil
     private var didSwipe: ((_ direction: Direction, _ velocity: CGVector) -> Void)? = nil
     private var didCancel: (() -> Void)? = nil
+    private var indexedContent: ((_ index: Int) -> Content?)? = nil
+    private var currentItemUpdate: ((_ topIndex: Int) -> Void)? = nil
     private var numberOfActiveView: UInt?
     private var numberOfHistoryItem: UInt?
 
@@ -82,11 +68,12 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         _ data: Data,
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) where Data.Element: Identifiable {
-        let cursor = DataCursor(Array(data))
-        self.content = {
-            guard let element = cursor.next() else { return nil }
-            return content(element)
+        let elements = Array(data)
+        self.indexedContent = { index in
+            guard index < elements.count else { return nil }
+            return content(elements[index])
         }
+        self.content = { nil }
     }
 
     /// Creates a SwipeableView from a collection, using a key path to identify
@@ -96,21 +83,66 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         id: KeyPath<Data.Element, ID>,
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) {
-        let cursor = DataCursor(Array(data))
-        self.content = {
-            guard let element = cursor.next() else { return nil }
-            return content(element)
+        let elements = Array(data)
+        self.indexedContent = { index in
+            guard index < elements.count else { return nil }
+            return content(elements[index])
         }
+        self.content = { nil }
+    }
+
+    /// Creates a SwipeableView from an identifiable collection, binding the
+    /// current top card element to a state variable. The binding is read-only:
+    /// it updates as cards are swiped but setting it externally has no effect.
+    public init<Data: RandomAccessCollection>(
+        _ data: Data,
+        currentItem: Binding<Data.Element?>,
+        @ViewBuilder content: @escaping (Data.Element) -> Content
+    ) where Data.Element: Identifiable {
+        let elements = Array(data)
+        self.indexedContent = { index in
+            guard index < elements.count else { return nil }
+            return content(elements[index])
+        }
+        self.currentItemUpdate = { topIndex in
+            currentItem.wrappedValue = topIndex < elements.count ? elements[topIndex] : nil
+        }
+        self.content = { nil }
+    }
+
+    /// Creates a SwipeableView from a collection with an explicit id key path,
+    /// binding the current top card element to a state variable. The binding is
+    /// read-only: it updates as cards are swiped but setting it externally has
+    /// no effect.
+    public init<Data: RandomAccessCollection, ID: Hashable>(
+        _ data: Data,
+        id: KeyPath<Data.Element, ID>,
+        currentItem: Binding<Data.Element?>,
+        @ViewBuilder content: @escaping (Data.Element) -> Content
+    ) {
+        let elements = Array(data)
+        self.indexedContent = { index in
+            guard index < elements.count else { return nil }
+            return content(elements[index])
+        }
+        self.currentItemUpdate = { topIndex in
+            currentItem.wrappedValue = topIndex < elements.count ? elements[topIndex] : nil
+        }
+        self.content = { nil }
     }
 
     public final class Coordinator {
         var viewControllers = Set<SwipeableUIHostingController<AnyView>>()
         var content: (() -> Content?)?
+        var indexedContent: ((_ index: Int) -> Content?)?
+        var nextIndex: Int = 0
         var didStart: ((_ location: CGPoint) -> Void)?
         var isSwiping: ((_ location: CGPoint, _ translation: CGPoint, _ movement: UnitPoint) -> Void)?
         var didEnd: ((_ location: CGPoint) -> Void)?
         var didSwipe: ((_ direction: Direction, _ velocity: CGVector) -> Void)?
         var didCancel: (() -> Void)?
+        var topIndex: Int = 0
+        var currentItemUpdate: ((_ topIndex: Int) -> Void)?
     }
 
     public func makeCoordinator() -> Coordinator {
@@ -130,7 +162,15 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
 
         newView.nextView = {
             guard let _ = newView.superview else { return nil } // Swipable view not yet part of a window and thus has no size
-            guard let rootView = coordinator.content?() else { return nil } // last card?
+
+            let rootView: Content?
+            if let indexedContent = coordinator.indexedContent {
+                rootView = indexedContent(coordinator.nextIndex)
+                if rootView != nil { coordinator.nextIndex += 1 }
+            } else {
+                rootView = coordinator.content?()
+            }
+            guard let rootView else { return nil } // last card?
 
             let swipeCoordinator = SwipeableViewCoordinator()
             let vc = SwipeableUIHostingController(swipeCoordinator: swipeCoordinator,
@@ -169,6 +209,8 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
             if let vc = coordinator.viewControllers.first(where: { $0.view == view }) {
                 vc.swipeCoordinator.swipedTransition = .init(direction: direction, velocity: velocity)
             }
+            coordinator.topIndex += 1
+            coordinator.currentItemUpdate?(coordinator.topIndex)
             coordinator.didSwipe?(direction, velocity)
         }
         newView.didEnd = { view, location in
@@ -191,11 +233,16 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         }
 
         coordinator.content = content
+        coordinator.indexedContent = indexedContent
         coordinator.didStart = didStart
         coordinator.isSwiping = isSwiping
         coordinator.didEnd = didEnd
         coordinator.didSwipe = didSwipe
         coordinator.didCancel = didCancel
+        coordinator.currentItemUpdate = currentItemUpdate
+        DispatchQueue.main.async {
+            coordinator.currentItemUpdate?(coordinator.topIndex)
+        }
 
         return newView
 
@@ -212,11 +259,13 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         }
 
         coordinator.content = content
+        coordinator.indexedContent = indexedContent
         coordinator.didStart = didStart
         coordinator.isSwiping = isSwiping
         coordinator.didEnd = didEnd
         coordinator.didSwipe = didSwipe
         coordinator.didCancel = didCancel
+        coordinator.currentItemUpdate = currentItemUpdate
     }
 
     //  Modifiers - Container View Callbacks

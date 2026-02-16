@@ -22,56 +22,32 @@ struct ContentView: View {
                            .red,
                            .mint,
                            .indigo]
-    @State var swipeCount = 0
 
     var body: some View {
-        SwipeableView {
-            if swipeCount <= 10 {
-                ZStack {
-                    CardView()
-                        .foregroundColor(colors.randomElement()!)
-                    VStack {
-                        Text("Hello World")
-                            .font(.system(size: 40))
-                            .foregroundStyle(Color.white)
-                        Text("\(swipeCount)")
-                            .font(.system(size: 28))
-                            .foregroundStyle(Color.white)
-                            .onZLSwipeStarted { location in
-                                print("Text.onZLSwipeStarted at \(location)...")
-                            }
-                            .onZLSwipeEnded { location in
-                                print("Text.onZLSwipeEnded at \(location)...")
-                            }
-                            .onZLSwipeCancelled {
-                                print("Text.onZLSwipeCancelled...")
-                            }
-                    }
-                }
-                .padding(5)
-                .onZLSwipeStarted { location in
-                    print("Card.onZLSwipeStarted at \(location)...")
-                }
-                .onZLSwipeEnded { location in
-                    print("Card.onZLSwipeEnded at \(location)...")
-                }
-                .onZLSwipeCancelled {
-                    print("Card.onZLSwipeCancelled...")
+        SwipeableView(colors, id: \.self) { color in
+            ZStack {
+                CardView()
+                    .foregroundColor(color)
+                VStack {
+                    Text("Hello World")
+                        .font(.system(size: 40))
+                        .foregroundStyle(Color.white)
                 }
             }
-            else {
-                nil
+            .padding(5)
+            .onZLSwipeStarted { location in
+                print("Card.onZLSwipeStarted at \(location)...")
+            }
+            .onZLSwipeCancelled {
+                print("Card.onZLSwipeCancelled...")
             }
         }
         .numberOfActiveView(5)
-        .onZLSwiped { _, _ in
-            swipeCount += 1
+        .onZLSwiped { direction, _ in
+            print("SwipeableView.onZLSwiped \(direction)...")
         }
         .onZLSwipeStarted { location in
             print("SwipeableView.onZLSwipeStarted at \(location)...")
-        }
-        .onZLSwipeEnded { location in
-            print("SwipeableView.onZLSwipeEnded at \(location)...")
         }
         .onZLSwipeCancelled {
             print("SwipeableView.onZLSwipeCancelled...")

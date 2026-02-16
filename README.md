@@ -40,9 +40,9 @@ See the screen recording below for a demonstration of SwipeableView in action:
 
 ![Demo](Screenshots/ExampleApp.gif)
 
-### Basic Example
+### Data-Driven Cards
 
-A simple stack of colored cards:
+Pass a collection directly, similar to List or ForEach. The card sequence ends when the collection is exhausted:
 
 ```swift
 import SwiftUI
@@ -54,73 +54,61 @@ struct ContentView: View {
                            .mint, .indigo]
 
     var body: some View {
-        SwipeableView {
+        SwipeableView(colors, id: \.self) { color in
             CardView()
-                .foregroundColor(colors.randomElement()!)
+                .foregroundColor(color)
                 .padding(5)
         }
     }
 }
 ```
 
-`CardView` is a built-in component that creates a rounded rectangle card with shadow. You can use it as-is or create your own custom card views.
-
-### Custom Card Views
-
-Any SwiftUI view works as a card:
+Collections with `Identifiable` elements don't need the `id:` parameter:
 
 ```swift
-SwipeableView {
-    VStack {
-        Image(systemName: "heart.fill")
-            .font(.system(size: 60))
-        Text("Custom Card")
-            .font(.headline)
-    }
-    .frame(width: 300, height: 400)
-    .background(Color.white)
-    .cornerRadius(20)
-    .shadow(radius: 10)
+SwipeableView(profiles) { profile in
+    ProfileCard(profile: profile)
 }
 ```
 
-### Bounded Cards
+`CardView` is a built-in component that creates a rounded rectangle card with shadow. You can use it as-is or create your own custom card views.
 
-By default, SwipeableView provides an infinite sequence of cards. To create a bounded collection, return `nil` from the content closure to end the sequence:
+### Content Closure
+
+For dynamic or infinite card sequences, use the content closure form. The closure is called each time a new card is needed. Return `nil` to end the sequence:
 
 ```swift
-var nextColor: Color? {
-    ...
-}
-
-var body: some View {
-    SwipeableView {
-        if let nextColor {
-            CardView()
-                .foregroundColor(nextColor)
-                .padding()
-        }
-        else {
-            nil
-        }
+SwipeableView {
+    if hasMoreCards {
+        CardView()
+            .foregroundColor(colors.randomElement()!)
+            .padding(5)
     }
-    .numberOfActiveView(5)
+    else {
+        nil
+    }
 }
 ```
 
 ### Action Callbacks
 
-Action callbacks can be attached to individual cards or to the SwipeableView itself.
+Action callbacks can be attached at three levels: the SwipeableView itself, a card, or any subview within a card.
 
-To add a callback to a card, place the modifier on the view returned by your content closure:
+To add a callback to a card or its subviews, place the modifier on the view returned by your content closure:
 
 ```swift
 SwipeableView {
-    CardView()
-        .padding()
-        .onZLSwipeStarted { location in
-            print("Card swiped starting at \(location)")
-        }
+    ZStack {
+        CardView()
+            .padding()
+        Text("Hello World")
+            .onZLSwipeStarted { location in
+                print("Text.onZLSwipeStarted at \(location)")
+            }
+    }
+    .onZLSwipeStarted { location in
+        print("Card.onZLSwipeStarted at \(location)")
+    }
 }
 ```
 
@@ -170,7 +158,7 @@ v0.2.0 renamed the action callback API. The old names still work but are depreca
 ## Version History
 
 - v0.1.0 -- initial implementation.
-- v0.2.0 -- new action callback API with per-card callbacks, bounded card support, and `CardView`.
+- v0.2.0 -- data-driven initializers, per-card action callbacks, bounded card support, and `CardView`.
 
 ## License
 

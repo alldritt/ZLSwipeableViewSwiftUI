@@ -38,6 +38,22 @@ class SwipeableUIHostingController<Content>: UIHostingController<Content> where 
     }
 }
 
+private class DataCursor<Element> {
+    private let elements: [Element]
+    private var index: Int = 0
+
+    init(_ elements: [Element]) {
+        self.elements = elements
+    }
+
+    func next() -> Element? {
+        guard index < elements.count else { return nil }
+        defer { index += 1 }
+        return elements[index]
+    }
+}
+
+
 public struct SwipeableView<Content: View>: UIViewRepresentable {
 
     @ViewBuilder let content: () -> Content?
@@ -60,33 +76,32 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         self.content = content
     }
 
-    //  TODO: It seems to me that SwipableView should probably follow the API pattern established for
-    //  SwiftUI Lists.  This means supporting ForEach and/or allowing array's of data to be passed to
-    //  the initializer to facilite passing of data into the content creation code.
-    //
-    //  Eg 1:
-    //
-    //  @State currentCard: String
-    //
-    //  var body: some View {
-    //      let names = ["Mark", "Janet", "Marleen", "Keith", "Frank"]
-    //
-    //      SwipableView(currentCard: $currentCard) {
-    //          ForEach(names, \.self) { name in
-    //              ZStack {
-    //                  CardView(color: ...)
-    //                  Text(name)
-    //              }
-    //          }
-    //      }
-    //  }
-    //
-    //  This approach implies a bounded sequence of cards.  The existing implementation provides an
-    //  unbounded sequence of cards.
-    //
-    //  I'll return to this once I have more experience with SwipeableView and I can find some good
-    //  examples of the correct way to implement something like SwiftUI's List.
-    //
+    /// Creates a SwipeableView from an identifiable collection. Each element
+    /// produces one card, and the sequence ends when the collection is exhausted.
+    public init<Data: RandomAccessCollection>(
+        _ data: Data,
+        @ViewBuilder content: @escaping (Data.Element) -> Content
+    ) where Data.Element: Identifiable {
+        let cursor = DataCursor(Array(data))
+        self.content = {
+            guard let element = cursor.next() else { return nil }
+            return content(element)
+        }
+    }
+
+    /// Creates a SwipeableView from a collection, using a key path to identify
+    /// elements. Each element produces one card.
+    public init<Data: RandomAccessCollection, ID: Hashable>(
+        _ data: Data,
+        id: KeyPath<Data.Element, ID>,
+        @ViewBuilder content: @escaping (Data.Element) -> Content
+    ) {
+        let cursor = DataCursor(Array(data))
+        self.content = {
+            guard let element = cursor.next() else { return nil }
+            return content(element)
+        }
+    }
 
     public final class Coordinator {
         var viewControllers = Set<SwipeableUIHostingController<AnyView>>()

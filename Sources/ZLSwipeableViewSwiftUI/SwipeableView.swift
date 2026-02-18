@@ -12,12 +12,37 @@ import ZLSwipeableViewSwift
 
 private class SwiftUIZLSwipeableView: ZLSwipeableView {
 
-    //  UIViewRepresentable invokes it's makeUIView method before the parent view is placed into
-    //  a container view and window.  This means that the frame size is unknown.  Only when
-    //  didMoveToWindow is called can we properly size the card views.
+    //  UIViewRepresentable invokes makeUIView before the parent view has its final size.
+    //  didMoveToWindow is the earliest reliable point, but inside NavigationSplitView the
+    //  bounds may still be zero or intermediate (before safe area / nav bar settle).
+    //
+    //  Track the size at which we last loaded cards.  Whenever layoutSubviews reports a
+    //  significantly different size (or the initial load was deferred), discard and reload
+    //  so cards are both sized and positioned correctly.
+
+    private var loadedSize: CGSize = .zero
 
     override func didMoveToWindow() {
         if superview != nil {
+            discardViews()
+            let size = bounds.size
+            if size.width > 0 && size.height > 0 {
+                loadedSize = size
+                loadViews()
+            } else {
+                loadedSize = .zero
+            }
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let size = bounds.size
+        guard size.width > 0, size.height > 0 else { return }
+        if loadedSize == .zero ||
+           abs(size.width - loadedSize.width) > 1 ||
+           abs(size.height - loadedSize.height) > 1 {
+            loadedSize = size
             discardViews()
             loadViews()
         }
@@ -58,6 +83,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
     private var currentItemUpdate: ((_ topIndex: Int) -> Void)? = nil
     private var numberOfActiveView: UInt?
     private var numberOfHistoryItem: UInt?
+    private var allowsSwiping: Bool = true
     private var dataIDs: [AnyHashable]?
 
     public init(content: @escaping () -> Content?) {
@@ -150,6 +176,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         var topIndex: Int = 0
         var currentItemUpdate: ((_ topIndex: Int) -> Void)?
         var lastDataIDs: [AnyHashable]?
+        var allowsSwiping: Bool = true
     }
 
     public func makeCoordinator() -> Coordinator {
@@ -238,7 +265,12 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
                 coordinator.viewControllers.remove(vc)
             }
         }
+        let defaultShouldSwipe = newView.shouldSwipeView
+        newView.shouldSwipeView = { view, movement, swipeableView in
+            coordinator.allowsSwiping && defaultShouldSwipe(view, movement, swipeableView)
+        }
 
+        coordinator.allowsSwiping = allowsSwiping
         coordinator.content = content
         coordinator.indexedContent = indexedContent
         coordinator.didStart = didStart
@@ -279,6 +311,7 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
             uiView.numberOfHistoryItem = numberOfHistoryItem
         }
 
+        coordinator.allowsSwiping = allowsSwiping
         coordinator.content = content
         coordinator.indexedContent = indexedContent
         coordinator.didStart = didStart
@@ -357,6 +390,13 @@ public struct SwipeableView<Content: View>: UIViewRepresentable {
         var copiedView = self
 
         copiedView.numberOfHistoryItem = newValue
+        return copiedView
+    }
+
+    public func allowsSwiping(_ allowed: Bool) -> Self {
+        var copiedView = self
+
+        copiedView.allowsSwiping = allowed
         return copiedView
     }
 
@@ -497,6 +537,26 @@ internal struct ZLSwipeEndedReceiverModifier: ViewModifier {
 }
 
 
+/*
+ internal struct ZLShouldSwipeReceiverModifier: ViewModifier {
+    // This is passed into the environment by the UIHostingController setup
+    @EnvironmentObject fileprivate var coordinator: SwipeableViewCoordinator
+
+    fileprivate var shouldSwipe: Bool = true
+
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: coordinator.shouldSwipeTransition) {
+                if let shouldSwipeTransition = coordinator.shouldSwipeTransition {
+                    onSwipeEnded?(endedTransition.location)
+                    //coordinator.swipeEndedTransition = nil
+                }
+            }
+    }
+}
+*/
+
+
 extension View {
     public func onZLSwiping(_ action: @escaping (_ location: CGPoint, _ translation: CGPoint, _ movement: UnitPoint) -> Void) -> some View {
         self.modifier(ZLSwipingReceiverModifier(onSwiping: action))
@@ -517,5 +577,10 @@ extension View {
     public func onZLSwipeEnded(_ action: @escaping (_ location: CGPoint) -> Void) -> some View {
         self.modifier(ZLSwipeEndedReceiverModifier(onSwipeEnded: action))
     }
-
+    
+    /*
+    public func onZLShouldSwipe(_ shouldSwipe: Bool = true) -> some View {
+        self.modifier(ZLShouldSwipeReceiverModifier(shouldSwipe: shouldSwipe))
+    }
+     */
 }

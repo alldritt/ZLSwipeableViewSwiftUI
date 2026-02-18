@@ -177,6 +177,7 @@ The following action modifiers are available:
 
 - `numberOfActiveView(_ count: UInt)` -- sets the number of cards visible in the stack at once.
 - `numberOfHistoryItem(_ count: UInt)` -- sets the number of previously swiped cards kept in history.
+- `allowsSwiping(_ allowed: Bool)` -- enables or disables swipe gestures. When `false`, the top card cannot be swiped away by the user. Useful for single-card collections where swiping doesn't make sense. Defaults to `true`.
 
 ### Programmatic Control
 
